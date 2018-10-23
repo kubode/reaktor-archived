@@ -4,6 +4,6 @@ plugins {
 }
 
 dependencies {
-    compile(kotlin("stdlib"))
-    testCompile("junit:junit:4.12")
+    implementation(kotlin("stdlib"))
+    testImplementation("junit:junit:4.12")
 }
