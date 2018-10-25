@@ -10,7 +10,7 @@ import javax.lang.model.element.TypeElement
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 @SupportedAnnotationTypes("org.kotlin.annotationProcessor.TestAnnotation")
 class ReaktorAnnotationProcessor : AbstractProcessor() {
-    override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
+    override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
