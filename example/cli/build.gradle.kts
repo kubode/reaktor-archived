@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.Coroutines
 plugins {
     application
     kotlin("jvm")
+    kotlin("kapt")
 }
 
 application {

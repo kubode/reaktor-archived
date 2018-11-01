@@ -2,16 +2,19 @@
 
 package com.github.kubode.reaktor.example.cli
 
-import com.github.kubode.reaktor.LiveDataState
 import com.github.kubode.reaktor.Reactor
+import com.github.kubode.reaktor.TestAnnotation
 import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.Channel
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.produce
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
 import kotlin.coroutines.experimental.coroutineContext
 
+@TestAnnotation
 class MyReactor : Reactor<MyReactor.Action, MyReactor.Mutation, MyReactor.State> {
     sealed class Action {
         object Increment : Action()
@@ -22,7 +25,6 @@ class MyReactor : Reactor<MyReactor.Action, MyReactor.Mutation, MyReactor.State>
         object Increment : Mutation()
     }
 
-    @LiveDataState
     data class State(
         val number: Int = 0
     )
@@ -31,16 +33,18 @@ class MyReactor : Reactor<MyReactor.Action, MyReactor.Mutation, MyReactor.State>
 
     private var delayedJob: Job? = null
 
-    override suspend fun mutate(channel: Channel<Mutation>, action: Action) {
-        when (action) {
-            is Action.Increment -> {
-                channel.send(Mutation.Increment)
-            }
-            is Action.IncrementDelayed -> {
-                delayedJob?.cancel()
-                delayedJob = CoroutineScope(coroutineContext).launch {
-                    delay(1000)
-                    channel.send(Mutation.Increment)
+    override suspend fun mutate(action: Action): ReceiveChannel<Mutation> {
+        return CoroutineScope(coroutineContext).produce {
+            when (action) {
+                is Action.Increment -> {
+                    send(Mutation.Increment)
+                }
+                is Action.IncrementDelayed -> {
+                    delayedJob?.cancel()
+                    delayedJob = CoroutineScope(coroutineContext).launch {
+                        delay(1000)
+                        send(Mutation.Increment)
+                    }
                 }
             }
         }
@@ -53,6 +57,12 @@ class MyReactor : Reactor<MyReactor.Action, MyReactor.Mutation, MyReactor.State>
             )
         }
     }
+}
+
+class GeneratedMyReactor {
+    val state = Channel<MyReactor.State>()
+    val action = Channel<MyReactor.Action>()
+
 }
 
 fun main(vararg args: String) = runBlocking {

@@ -1,13 +1,11 @@
 package com.github.kubode.reaktor
 
-import kotlinx.coroutines.experimental.channels.Channel
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
-annotation class LiveDataState
+annotation class TestAnnotation
 
 interface Reactor<ActionT, MutationT, StateT> {
-    interface View
-
     val initialState: StateT
-    suspend fun mutate(channel: Channel<MutationT>, action: ActionT)
+    suspend fun mutate(action: ActionT): ReceiveChannel<MutationT>
     fun reduce(state: StateT, mutation: MutationT): StateT
 }
