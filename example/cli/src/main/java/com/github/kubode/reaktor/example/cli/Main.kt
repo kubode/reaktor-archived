@@ -4,15 +4,14 @@ package com.github.kubode.reaktor.example.cli
 
 import com.github.kubode.reaktor.Reactor
 import com.github.kubode.reaktor.TestAnnotation
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.Channel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
-import kotlinx.coroutines.experimental.channels.produce
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.runBlocking
-import kotlin.coroutines.experimental.coroutineContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlin.coroutines.coroutineContext
 
 @TestAnnotation
 class MyReactor : Reactor<MyReactor.Action, MyReactor.Mutation, MyReactor.State> {
@@ -57,12 +56,6 @@ class MyReactor : Reactor<MyReactor.Action, MyReactor.Mutation, MyReactor.State>
             )
         }
     }
-}
-
-class GeneratedMyReactor {
-    val state = Channel<MyReactor.State>()
-    val action = Channel<MyReactor.Action>()
-
 }
 
 fun main(vararg args: String) = runBlocking {

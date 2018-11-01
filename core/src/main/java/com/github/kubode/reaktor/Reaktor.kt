@@ -1,6 +1,6 @@
 package com.github.kubode.reaktor
 
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.ReceiveChannel
 
 annotation class TestAnnotation
 

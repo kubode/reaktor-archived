@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:0.30.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0")
     implementation("com.squareup:kotlinpoet:1.0.0-RC1")
     testImplementation("junit:junit:4.12")
 }
