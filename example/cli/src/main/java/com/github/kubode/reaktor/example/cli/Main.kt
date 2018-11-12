@@ -79,22 +79,22 @@ fun main() = runBlocking {
         }
     }
     debug("main send increment 1")
-    reactor.action.offer(MyReactor.Action.Increment)
+    reactor.action.send(MyReactor.Action.Increment)
     delay(1000)
 
     debug("main send increment 2")
-    reactor.action.offer(MyReactor.Action.Increment)
+    reactor.action.send(MyReactor.Action.Increment)
 
     debug("main send increment delayed 3")
-    reactor.action.offer(MyReactor.Action.IncrementDelayed)
+    reactor.action.send(MyReactor.Action.IncrementDelayed)
     delay(500)
 
     debug("main send increment delayed 4")
-    reactor.action.offer(MyReactor.Action.IncrementDelayed)
+    reactor.action.send(MyReactor.Action.IncrementDelayed)
     delay(500)
 
     debug("main send increment 5")
-    reactor.action.offer(MyReactor.Action.Increment)
+    reactor.action.send(MyReactor.Action.Increment)
     delay(1000)
 
     coroutineContext.cancelChildren()
