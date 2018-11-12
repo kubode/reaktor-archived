@@ -19,6 +19,8 @@ abstract class Reactor<ActionT, MutationT, StateT>(
     initialState: StateT
 ) : CoroutineScope {
 
+    interface View : CoroutineScope
+
     private val _state = BroadcastChannel<StateT>(Channel.CONFLATED).apply {
         offer(initialState)
     }
@@ -35,15 +37,14 @@ abstract class Reactor<ActionT, MutationT, StateT>(
 
     private val _reducer: SendChannel<MutationT> = actor {
         for (mutation in channel) {
-            currentState = reduce(currentState, mutation)
+            val newState = reduce(currentState, mutation)
+            currentState = newState
+            _state.offer(newState)
         }
     }
 
     var currentState: StateT = initialState
-        private set(value) {
-            field = value
-            _state.offer(value)
-        }
+        private set
 
     val state: ReceiveChannel<StateT> = _state.openSubscription()
 
