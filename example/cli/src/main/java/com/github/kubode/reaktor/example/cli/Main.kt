@@ -3,7 +3,6 @@
 package com.github.kubode.reaktor.example.cli
 
 import com.github.kubode.reaktor.Reactor
-import com.github.kubode.reaktor.TestAnnotation
 import com.github.kubode.reaktor.debug
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +15,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 
-@TestAnnotation
 class MyReactor(
     coroutineContext: CoroutineContext
 ) : Reactor<MyReactor.Action, MyReactor.Mutation, MyReactor.State>(
