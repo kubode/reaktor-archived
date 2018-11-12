@@ -9,23 +9,26 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.channels.flatMap
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.yield
+import kotlin.coroutines.CoroutineContext
 
 @TestAnnotation
-class MyReactor : Reactor<MyReactor.Action, MyReactor.Mutation, MyReactor.State>(State()) {
+class MyReactor(
+    coroutineContext: CoroutineContext
+) : Reactor<MyReactor.Action, MyReactor.Mutation, MyReactor.State>(
+    coroutineContext,
+    State()
+) {
 
     sealed class Action {
         object Increment : Action()
         object IncrementDelayed : Action()
 
-        override fun toString() = javaClass.simpleName
+        override fun toString() = javaClass.simpleName!!
     }
 
     sealed class Mutation {
@@ -70,20 +73,8 @@ class MyReactor : Reactor<MyReactor.Action, MyReactor.Mutation, MyReactor.State>
 }
 
 fun main() = runBlocking {
-//    val channel = produce {
-//        repeat(10) {i -> send(i) }
-//    }
-//        .flatMap { i ->
-//            produce {
-//                repeat(i) { j -> send(i * 10 + j) }
-//            }
-//        }
-//    launch {
-//        channel.consumeEach { debug("consume: $it") }
-//    }
-//    return@runBlocking
     debug("main start")
-    val reactor = MyReactor()
+    val reactor = MyReactor(coroutineContext + Dispatchers.Default)
     launch {
         reactor.state.consumeEach { state ->
             debug("main reactor.state.consumeEach $state")

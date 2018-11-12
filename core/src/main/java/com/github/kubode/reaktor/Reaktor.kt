@@ -1,15 +1,15 @@
 package com.github.kubode.reaktor
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
-import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 
 annotation class TestAnnotation
 
@@ -17,17 +17,29 @@ fun debug(message: String) =
     println("[${DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(LocalDateTime.now())}] [${Thread.currentThread().name}] $message")
 
 abstract class Reactor<ActionT, MutationT, StateT>(
-    initialState: StateT,
-    override val coroutineContext: CoroutineContext = EmptyCoroutineContext
+    override val coroutineContext: CoroutineContext,
+    initialState: StateT
 ) : CoroutineScope {
 
-    object NoAction
+    private val _state = BroadcastChannel<StateT>(Channel.CONFLATED).apply {
+        offer(initialState)
+    }
 
-    private val _action = Channel<ActionT>()
-    private val _state = Channel<StateT>()
+    private val _action: SendChannel<ActionT> = actor {
+        for (action in channel) {
+            launch {
+                for (mutation in mutate(action)) {
+                    _reducer.send(mutation)
+                }
+            }
+        }
+    }
 
-    val action: SendChannel<ActionT> = _action
-    val state: ReceiveChannel<StateT> = _state
+    private val _reducer: SendChannel<MutationT> = actor {
+        for (mutation in channel) {
+            currentState = reduce(currentState, mutation)
+        }
+    }
 
     var currentState: StateT = initialState
         private set(value) {
@@ -35,18 +47,9 @@ abstract class Reactor<ActionT, MutationT, StateT>(
             _state.offer(value)
         }
 
-    init {
-        _state.offer(initialState)
-        launch {
-            _action.consumeEach { action ->
-                launch {
-                    mutate(action).consumeEach { mutation ->
-                        currentState = reduce(currentState, mutation)
-                    }
-                }
-            }
-        }
-    }
+    val state: ReceiveChannel<StateT> = _state.openSubscription()
+
+    val action: SendChannel<ActionT> = _action
 
     open fun mutate(action: ActionT): ReceiveChannel<MutationT> {
         return Channel()
