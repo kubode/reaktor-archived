@@ -17,7 +17,7 @@ fun debug(message: String) =
     println("[${DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(LocalDateTime.now())}] [${Thread.currentThread().name}] $message")
 
 abstract class Reactor<ActionT, MutationT, StateT>(
-    override val coroutineContext: CoroutineContext,
+    final override val coroutineContext: CoroutineContext,
     initialState: StateT
 ) : CoroutineScope {
 
