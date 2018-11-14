@@ -2,7 +2,10 @@ package com.github.kubode.reaktor
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
@@ -69,6 +72,23 @@ object SingleValueReactorSpec : Spek({
             before { reactor.action.offer(SingleValueReactor.Action.UpdateValue(1)) }
             it("returns 1") {
                 expect(1) { runBlocking { reactor.state.receive().value } }
+            }
+        }
+        context("when offer some action") {
+            it("receives list of changes") {
+                val results = runBlocking {
+                    val results = mutableListOf<Int>()
+                    launch {
+                        reactor.state.consumeEach { results += it.value }
+                    }
+                    launch {
+                        reactor.action.send(SingleValueReactor.Action.UpdateValue(1))
+                        reactor.action.send(SingleValueReactor.Action.UpdateValue(2))
+                    }.join()
+                    this.coroutineContext.cancelChildren()
+                    results
+                }
+                expect(listOf(0, 1, 2)) { results }
             }
         }
     }
