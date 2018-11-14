@@ -3,6 +3,7 @@ package com.github.kubode.reaktor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.runBlocking
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import kotlin.coroutines.CoroutineContext
@@ -55,6 +56,19 @@ object SingleValueReactorSpec : Spek({
             before { reactor.action.offer(SingleValueReactor.Action.UpdateValue(1)) }
             it("returns 1") {
                 expect(1) { reactor.currentState.value }
+            }
+        }
+    }
+    describe("state") {
+        context("after initialized") {
+            it("returns 0") {
+                expect(0) { runBlocking { reactor.state.receive().value } }
+            }
+        }
+        context("after offer UpdateValue(1)") {
+            before { reactor.action.offer(SingleValueReactor.Action.UpdateValue(1)) }
+            it("returns 1") {
+                expect(1) { runBlocking { reactor.state.receive().value } }
             }
         }
     }
