@@ -1,8 +1,8 @@
-package com.github.kubode.reaktor.android
+package com.github.kubode.reaktor.example.android
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.github.kubode.reaktor.android.ui.main.MainFragment
+import androidx.appcompat.app.AppCompatActivity
+import com.github.kubode.reaktor.example.android.ui.main.MainFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,5 +15,4 @@ class MainActivity : AppCompatActivity() {
                 .commitNow()
         }
     }
-
 }

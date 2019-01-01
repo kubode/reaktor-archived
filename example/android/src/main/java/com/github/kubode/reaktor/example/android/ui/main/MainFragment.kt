@@ -1,14 +1,14 @@
-package com.github.kubode.reaktor.android.ui.main
+package com.github.kubode.reaktor.example.android.ui.main
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.github.kubode.reaktor.android.R
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
+import com.github.kubode.reaktor.example.android.R
 
-class MainFragment : androidx.fragment.app.Fragment() {
+class MainFragment : Fragment() {
 
     companion object {
         fun newInstance() = MainFragment()
@@ -28,5 +28,4 @@ class MainFragment : androidx.fragment.app.Fragment() {
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         // TODO: Use the ViewModel
     }
-
 }

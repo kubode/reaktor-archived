@@ -1,4 +1,4 @@
-package com.github.kubode.reaktor.android.ui.main
+package com.github.kubode.reaktor.example.android.ui.main
 
 import androidx.lifecycle.ViewModel
 
