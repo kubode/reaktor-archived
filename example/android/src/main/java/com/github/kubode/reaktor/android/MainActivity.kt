@@ -1,6 +1,6 @@
 package com.github.kubode.reaktor.android
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.github.kubode.reaktor.android.ui.main.MainFragment
 
