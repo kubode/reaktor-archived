@@ -12,7 +12,6 @@ application {
 
 dependencies {
     implementation(project(":core"))
-    kapt(project(":compiler"))
     implementation(kotlin("stdlib"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0")
     implementation("com.squareup:kotlinpoet:1.0.0-RC1")
