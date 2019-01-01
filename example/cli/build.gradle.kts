@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.Coroutines
-
 plugins {
     application
     kotlin("jvm")
@@ -13,11 +11,7 @@ application {
 dependencies {
     implementation(project(":core"))
     implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0")
-    implementation("com.squareup:kotlinpoet:1.0.0-RC1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1")
+    testImplementation(kotlin("test"))
     testImplementation("junit:junit:4.12")
-}
-
-kotlin {
-    experimental.coroutines = Coroutines.ENABLE
 }
