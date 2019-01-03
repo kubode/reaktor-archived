@@ -2,7 +2,7 @@
 
 package com.github.kubode.reaktor.example.cli
 
-import com.github.kubode.reaktor.Reactor
+import com.github.kubode.reaktor.SimpleReactor
 import com.github.kubode.reaktor.debug
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -15,9 +15,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 
-class MyReactor(
+class MySimpleReactor(
     coroutineContext: CoroutineContext
-) : Reactor<MyReactor.Action, MyReactor.Mutation, MyReactor.State>(
+) : SimpleReactor<MySimpleReactor.Action, MySimpleReactor.Mutation, MySimpleReactor.State>(
     coroutineContext,
     State()
 ) {
@@ -72,29 +72,29 @@ class MyReactor(
 
 fun main() = runBlocking {
     debug("main start")
-    val reactor = MyReactor(coroutineContext + Dispatchers.Default)
+    val reactor = MySimpleReactor(coroutineContext + Dispatchers.Default)
     launch {
         reactor.state.consumeEach { state ->
             debug("main reactor.state.consumeEach $state")
         }
     }
     debug("main send increment 1")
-    reactor.action.send(MyReactor.Action.Increment)
+    reactor.action.send(MySimpleReactor.Action.Increment)
     delay(1000)
 
     debug("main send increment 2")
-    reactor.action.send(MyReactor.Action.Increment)
+    reactor.action.send(MySimpleReactor.Action.Increment)
 
     debug("main send increment delayed 3")
-    reactor.action.send(MyReactor.Action.IncrementDelayed)
+    reactor.action.send(MySimpleReactor.Action.IncrementDelayed)
     delay(500)
 
     debug("main send increment delayed 4")
-    reactor.action.send(MyReactor.Action.IncrementDelayed)
+    reactor.action.send(MySimpleReactor.Action.IncrementDelayed)
     delay(500)
 
     debug("main send increment 5")
-    reactor.action.send(MyReactor.Action.Increment)
+    reactor.action.send(MySimpleReactor.Action.Increment)
     delay(1000)
 
     coroutineContext.cancelChildren()

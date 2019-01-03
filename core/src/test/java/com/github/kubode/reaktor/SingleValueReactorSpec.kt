@@ -12,9 +12,9 @@ import org.spekframework.spek2.style.specification.describe
 import kotlin.coroutines.CoroutineContext
 import kotlin.test.expect
 
-private class SingleValueReactor(
+private class SingleValueSimpleReactor(
     coroutineContext: CoroutineContext
-) : Reactor<SingleValueReactor.Action, SingleValueReactor.Mutation, SingleValueReactor.State>(
+) : SimpleReactor<SingleValueSimpleReactor.Action, SingleValueSimpleReactor.Mutation, SingleValueSimpleReactor.State>(
     coroutineContext,
     State()
 ) {
@@ -47,7 +47,7 @@ private class SingleValueReactor(
 
 object SingleValueReactorSpec : Spek({
     val coroutineContext by memoized { Dispatchers.Unconfined }
-    val reactor by memoized { SingleValueReactor(coroutineContext) }
+    val reactor by memoized { SingleValueSimpleReactor(coroutineContext) }
     afterEachTest { coroutineContext.cancel() }
     describe("currentState") {
         context("after initialized") {
@@ -56,7 +56,7 @@ object SingleValueReactorSpec : Spek({
             }
         }
         context("after offer UpdateValue(1)") {
-            before { reactor.action.offer(SingleValueReactor.Action.UpdateValue(1)) }
+            before { reactor.action.offer(SingleValueSimpleReactor.Action.UpdateValue(1)) }
             it("returns 1") {
                 expect(1) { reactor.currentState.value }
             }
@@ -69,7 +69,7 @@ object SingleValueReactorSpec : Spek({
             }
         }
         context("after offer UpdateValue(1)") {
-            before { reactor.action.offer(SingleValueReactor.Action.UpdateValue(1)) }
+            before { reactor.action.offer(SingleValueSimpleReactor.Action.UpdateValue(1)) }
             it("returns 1") {
                 expect(1) { runBlocking { reactor.state.receive().value } }
             }
@@ -82,8 +82,8 @@ object SingleValueReactorSpec : Spek({
                         reactor.state.consumeEach { results += it.value }
                     }
                     launch {
-                        reactor.action.send(SingleValueReactor.Action.UpdateValue(1))
-                        reactor.action.send(SingleValueReactor.Action.UpdateValue(2))
+                        reactor.action.send(SingleValueSimpleReactor.Action.UpdateValue(1))
+                        reactor.action.send(SingleValueSimpleReactor.Action.UpdateValue(2))
                     }.join()
                     this.coroutineContext.cancelChildren()
                     results
