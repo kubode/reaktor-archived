@@ -14,6 +14,18 @@ import kotlin.coroutines.CoroutineContext
 fun debug(message: String) =
     println("[${DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(LocalDateTime.now())}] [${Thread.currentThread().name}] $message")
 
+interface IReactor<ActionT, MutationT, StateT> : CoroutineScope {
+    val action: SendChannel<ActionT>
+    val initialState: StateT
+    val currentState: StateT
+    val state: ReceiveChannel<StateT>
+    fun transformAction(action: ReceiveChannel<ActionT>): ReceiveChannel<ActionT> = action
+    fun mutate(action: ActionT): ReceiveChannel<MutationT> = Channel()
+    fun transformMutation(mutation: ReceiveChannel<MutationT>): ReceiveChannel<MutationT> = mutation
+    fun reduce(state: StateT, mutation: MutationT): StateT = state
+    fun transformState(state: ReceiveChannel<StateT>): ReceiveChannel<StateT> = state
+}
+
 abstract class Reactor<ActionT, MutationT, StateT>(
     final override val coroutineContext: CoroutineContext,
     initialState: StateT
